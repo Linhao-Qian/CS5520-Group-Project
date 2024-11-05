@@ -62,7 +62,7 @@ const SignUpScreen = ({ navigation }) => {
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Card style={styles.card}>
         <Text style={styles.title}>Sign Up</Text>
-        <Text style={styles.paragraph}>Create a new account</Text>
+        <Text>Create a new account</Text>
         <FormInput
           label="Email"
           value={email}
