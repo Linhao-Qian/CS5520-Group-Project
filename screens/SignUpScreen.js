@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Card } from 'react-native-paper';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebaseSetup';
+import { createUserProfile } from '../services/firestoreHelper';
 import { styles } from '../styles/styles';
 import FormInput from '../components/FormInput';
 
@@ -26,23 +27,29 @@ const SignUpScreen = ({ navigation }) => {
       setErrorMessage('Email cannot be empty.');
       return;
     }
-
     if (!validatePassword(password)) {
       setErrorMessage(
         'Password must be at least 8 characters long, and include at least one uppercase letter, one lowercase letter, one number, and one special character.'
       );
       return;
     }
-
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match.');
       return;
     }
-
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+      await createUserProfile({
+        uid: user.uid,
+        email: user.email,
+        username: 'default_user',
+        avatar: null,
+        height: null,
+        gender: 'Prefer Not to Say',
+        age: null,
+        allergies: null,
+      });
       navigation.replace('Home');
     } catch (error) {
       setErrorMessage('Error creating account. Please try again.');
@@ -56,7 +63,6 @@ const SignUpScreen = ({ navigation }) => {
       <Card style={styles.card}>
         <Text style={styles.title}>Sign Up</Text>
         <Text style={styles.paragraph}>Create a new account</Text>
-        
         <FormInput
           label="Email"
           value={email}
@@ -64,7 +70,6 @@ const SignUpScreen = ({ navigation }) => {
           keyboardType="email-address"
           placeholder="Enter your email"
         />
-        
         <FormInput
           label="Password"
           value={password}
@@ -72,7 +77,6 @@ const SignUpScreen = ({ navigation }) => {
           secureTextEntry
           placeholder="Enter your password"
         />
-        
         <FormInput
           label="Confirm Password"
           value={confirmPassword}
@@ -80,13 +84,10 @@ const SignUpScreen = ({ navigation }) => {
           secureTextEntry
           placeholder="Confirm your password"
         />
-        
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-        
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-        
         <TouchableOpacity
           style={styles.linkButton}
           onPress={() => navigation.navigate('Login')}
