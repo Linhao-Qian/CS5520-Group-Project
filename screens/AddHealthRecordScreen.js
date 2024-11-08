@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { Button, Card } from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "../styles/styles";
 import FormInput from "../components/FormInput";
 
@@ -13,11 +14,23 @@ const AddHealthRecordScreen = ({ navigation }) => {
     heartRate: "",
     date: new Date(),
   });
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const handleSaveRecord = () => {
-    // Placeholder function for saving the record
     console.log("Record saved:", currentRecord);
     navigation.goBack();
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+
+  const onDateChange = (event, selectedDate) => {
+    if (event.type === "set") {
+      const currentDate = selectedDate || currentRecord.date;
+      setCurrentRecord({ ...currentRecord, date: currentDate });
+    }
+    setDatePickerVisible(false);
   };
 
   return (
@@ -55,6 +68,22 @@ const AddHealthRecordScreen = ({ navigation }) => {
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, heartRate: text })}
             keyboardType="numeric"
           />
+          <Text style={styles.label}>Date *</Text>
+          <FormInput
+            value={currentRecord.date.toLocaleDateString()}
+            onPressIn={showDatePicker}
+            editable={false}
+          />
+
+          {datePickerVisible && (
+            <DateTimePicker
+              value={currentRecord.date}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+            />
+          )}
+
           <Button mode="contained" onPress={handleSaveRecord} style={styles.saveButton}>
             Save
           </Button>
@@ -85,6 +114,12 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginBottom: 20,
     textAlign: "center",
+  },
+  label: {
+    marginTop: 20,
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: "bold",
   },
   saveButton: {
     marginTop: 20,
