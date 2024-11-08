@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
+import { IconButton } from "react-native-paper";
 import { colors } from "../styles/styles";
 
-const HealthRecordsScreen = () => {
+const HealthRecordsScreen = ({ navigation }) => {
   const [records, setRecords] = useState([
     { id: "1", date: "2024-10-01", bloodPressure: "120/80", bloodSugar: "90", weight: "70 kg" },
     { id: "2", date: "2024-10-02", bloodPressure: "125/85", bloodSugar: "95", weight: "71 kg" },
@@ -16,6 +17,23 @@ const HealthRecordsScreen = () => {
       <Text style={styles.recordText}>Weight: {item.weight}</Text>
     </View>
   );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="plus"
+          color="#fff"
+          size={24}
+          onPress={() => navigation.navigate("AddHealthRecord")}
+        />
+      ),
+      headerStyle: {
+        backgroundColor: colors.primary,
+      },
+      headerTintColor: "#fff",
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
