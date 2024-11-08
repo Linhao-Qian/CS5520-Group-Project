@@ -40,11 +40,32 @@ const TabNavigator = () => {
         headerTintColor: "#fff",
       })}
     >
-      <Tab.Screen name="Health Stat" component={HealthRecordsScreen} />
-      <Tab.Screen name="Medicine" component={MedicationRemindersScreen} />
-      <Tab.Screen name="Recovery" component={RecoveryScreen} />
-      <Tab.Screen name="Map" component={MapScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen 
+        name="Health Stat" 
+        component={HealthRecordsScreen} 
+      />
+      <Tab.Screen 
+        name="Medicine" 
+        component={MedicationRemindersScreen} 
+        options={{
+          headerRight: () => null,
+        }}
+      />
+      <Tab.Screen 
+        name="Recovery" 
+        component={RecoveryScreen} 
+        options={{
+          headerRight: () => null,
+        }}
+      />
+      <Tab.Screen 
+        name="Map" 
+        component={MapScreen} 
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+      />
     </Tab.Navigator>
   );
 };

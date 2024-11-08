@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, Text, Alert } from "react-native";
+import { View, Alert, ScrollView, Text, StyleSheet } from "react-native";
 import { Button, Card } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { addOrUpdateHealthRecord } from "../services/firestoreHelper";
 import { colors } from "../styles/styles";
 import FormInput from "../components/FormInput";
 
@@ -35,10 +36,16 @@ const AddHealthRecordScreen = ({ navigation }) => {
     return true;
   };
 
-  const handleSaveRecord = () => {
+  const handleSaveRecord = async () => {
     if (!validateInputs()) return;
-    console.log("Record saved:", currentRecord);
-    navigation.goBack();
+
+    try {
+      await addOrUpdateHealthRecord(currentRecord);
+      Alert.alert("Success", "Health record saved.");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Failed to save record:", error);
+    }
   };
 
   const showDatePicker = () => {
@@ -54,36 +61,35 @@ const AddHealthRecordScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.title}>Add Health Record</Text>
           <FormInput
-            label="Blood Pressure (mmHg)"
+            label="Blood Pressure (mmHg) *"
             value={currentRecord.bloodPressure}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, bloodPressure: text })}
             keyboardType="numeric"
           />
           <FormInput
-            label="Blood Sugar (mg/dL)"
+            label="Blood Sugar (mg/dL) *"
             value={currentRecord.bloodSugar}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, bloodSugar: text })}
             keyboardType="numeric"
           />
           <FormInput
-            label="Weight (kg)"
+            label="Weight (kg) *"
             value={currentRecord.weight}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, weight: text })}
             keyboardType="numeric"
           />
           <FormInput
-            label="Sleep Duration (hours)"
+            label="Sleep Duration (hours) *"
             value={currentRecord.sleepDuration}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, sleepDuration: text })}
             keyboardType="numeric"
           />
           <FormInput
-            label="Heart Rate (bpm)"
+            label="Heart Rate (bpm) *"
             value={currentRecord.heartRate}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, heartRate: text })}
             keyboardType="numeric"
@@ -119,24 +125,16 @@ const AddHealthRecordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 20,
   },
   card: {
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    elevation: 3,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.primary,
     marginBottom: 20,
-    textAlign: "center",
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    elevation: 4,
   },
   label: {
-    marginTop: 20,
+    marginBottom: 5,
     fontSize: 16,
     color: colors.primary,
     fontWeight: "bold",

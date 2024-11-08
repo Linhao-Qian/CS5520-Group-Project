@@ -1,9 +1,9 @@
 import React, { useState, useLayoutEffect } from "react";
-import { View, ScrollView, StyleSheet, Alert, Text } from "react-native";
+import { View, Text, StyleSheet, Alert, ScrollView, Platform } from "react-native";
 import { TextInput, Button, Card, IconButton } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { addOrUpdateHealthRecord, deleteHealthRecord } from "../services/firestoreHelper";
 import { colors } from "../styles/styles";
-import FormInput from "../components/FormInput";
 
 const EditHealthRecordScreen = ({ navigation, route }) => {
   const recordToEdit = route.params?.record;
@@ -16,7 +16,6 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "Edit Health Record",
       headerRight: () => (
         <IconButton
           icon="delete"
@@ -27,6 +26,37 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
     });
   }, [navigation]);
 
+  const validateInputs = () => {
+    const { bloodPressure, bloodSugar, weight, sleepDuration, heartRate } = currentRecord;
+    const numericFields = [
+      { label: "Blood Pressure", value: bloodPressure },
+      { label: "Blood Sugar", value: bloodSugar },
+      { label: "Weight", value: weight },
+      { label: "Sleep Duration", value: sleepDuration },
+      { label: "Heart Rate", value: heartRate },
+    ];
+
+    for (const field of numericFields) {
+      if (field.value === "" || isNaN(field.value) || Number(field.value) < 0) {
+        Alert.alert("Invalid Input", `${field.label} must be a non-negative number.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleSaveRecord = async () => {
+    if (!validateInputs()) return;
+
+    try {
+      await addOrUpdateHealthRecord(currentRecord);
+      Alert.alert("Success", "Health record updated.");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Failed to update record:", error);
+    }
+  };
+
   const confirmDelete = () => {
     Alert.alert("Delete Record", "Are you sure you want to delete this record?", [
       { text: "Cancel", style: "cancel" },
@@ -34,14 +64,14 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
     ]);
   };
 
-  const handleDeleteRecord = () => {
-    console.log("Record deleted:", currentRecord.id);
-    navigation.goBack();
-  };
-
-  const handleSaveRecord = () => {
-    console.log("Record updated:", currentRecord);
-    navigation.goBack();
+  const handleDeleteRecord = async () => {
+    try {
+      await deleteHealthRecord(currentRecord.id);
+      Alert.alert("Success", "Health record deleted.");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Failed to delete record:", error);
+    }
   };
 
   const showDatePicker = () => {
@@ -49,7 +79,7 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
   };
 
   const onDateChange = (event, selectedDate) => {
-    if (event.type === "set") {
+    if (event.type === "set") { 
       const currentDate = selectedDate || currentRecord.date;
       setCurrentRecord({ ...currentRecord, date: currentDate });
     }
@@ -57,60 +87,87 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.title}>Edit Health Record</Text>
-          <FormInput
-            label="Blood Pressure (mmHg)"
+          <TextInput
+            label="Blood Pressure (mmHg) *"
             value={currentRecord.bloodPressure}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, bloodPressure: text })}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.input}
+            theme={{ colors: { primary: colors.primary } }}
           />
-          <FormInput
-            label="Blood Sugar (mg/dL)"
+          <TextInput
+            label="Blood Sugar (mg/dL) *"
             value={currentRecord.bloodSugar}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, bloodSugar: text })}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.input}
+            theme={{ colors: { primary: colors.primary } }}
           />
-          <FormInput
-            label="Weight (kg)"
+          <TextInput
+            label="Weight (kg) *"
             value={currentRecord.weight}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, weight: text })}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.input}
+            theme={{ colors: { primary: colors.primary } }}
           />
-          <FormInput
-            label="Sleep Duration (hours)"
+          <TextInput
+            label="Sleep Duration (hours) *"
             value={currentRecord.sleepDuration}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, sleepDuration: text })}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.input}
+            theme={{ colors: { primary: colors.primary } }}
           />
-          <FormInput
-            label="Heart Rate (bpm)"
+          <TextInput
+            label="Heart Rate (bpm) *"
             value={currentRecord.heartRate}
             onChangeText={(text) => setCurrentRecord({ ...currentRecord, heartRate: text })}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.input}
+            theme={{ colors: { primary: colors.primary } }}
           />
           <Text style={styles.label}>Date *</Text>
-          <FormInput
+          <TextInput
+            style={styles.input}
             value={currentRecord.date.toLocaleDateString()}
             onPressIn={showDatePicker}
             editable={false}
+            mode="outlined"
+            theme={{ colors: { primary: colors.primary } }}
           />
 
           {datePickerVisible && (
             <DateTimePicker
               value={currentRecord.date}
               mode="date"
-              display="default"
+              display={Platform.OS === 'ios' ? 'inline' : 'default'}
               onChange={onDateChange}
             />
           )}
 
-          <Button mode="contained" onPress={handleSaveRecord} style={styles.saveButton}>
+          <Button
+            mode="contained"
+            onPress={handleSaveRecord}
+            style={styles.saveButton}
+            theme={{ colors: { primary: colors.primary } }}
+          >
             Save
           </Button>
-          <Button mode="outlined" onPress={() => navigation.goBack()} style={styles.cancelButton}>
+          <Button
+            mode="outlined"
+            onPress={() => navigation.goBack()}
+            style={styles.cancelButton}
+            theme={{ colors: { primary: colors.primary } }}
+          >
             Cancel
           </Button>
         </Card.Content>
@@ -122,24 +179,20 @@ const EditHealthRecordScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 20,
   },
   card: {
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    elevation: 3,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.primary,
     marginBottom: 20,
-    textAlign: "center",
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    elevation: 3,
+  },
+  input: {
+    marginBottom: 15,
+    backgroundColor: '#f5f5f5',
   },
   label: {
-    marginTop: 20,
+    marginBottom: 5,
     fontSize: 16,
     color: colors.primary,
     fontWeight: "bold",
