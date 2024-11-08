@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView, StyleSheet, Text, Alert } from "react-native";
 import { Button, Card } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "../styles/styles";
@@ -16,7 +16,27 @@ const AddHealthRecordScreen = ({ navigation }) => {
   });
   const [datePickerVisible, setDatePickerVisible] = useState(false);
 
+  const validateInputs = () => {
+    const { bloodPressure, bloodSugar, weight, sleepDuration, heartRate } = currentRecord;
+    const numericFields = [
+      { label: "Blood Pressure", value: bloodPressure },
+      { label: "Blood Sugar", value: bloodSugar },
+      { label: "Weight", value: weight },
+      { label: "Sleep Duration", value: sleepDuration },
+      { label: "Heart Rate", value: heartRate },
+    ];
+
+    for (const field of numericFields) {
+      if (field.value === "" || isNaN(field.value) || Number(field.value) < 0) {
+        Alert.alert("Invalid Input", `${field.label} must be a non-negative number.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSaveRecord = () => {
+    if (!validateInputs()) return;
     console.log("Record saved:", currentRecord);
     navigation.goBack();
   };
