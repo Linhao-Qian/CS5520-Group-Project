@@ -97,6 +97,22 @@ service cloud.firestore {
                    ((resource == null && request.auth.uid == request.resource.data.uid) || 
                    (resource != null && request.auth.uid == resource.data.uid));
     }
+
+    match /medicine/{document=**} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      allow write: if request.auth != null && 
+                   ((resource == null && request.auth.uid == request.resource.data.uid) || 
+                   (resource != null && request.auth.uid == resource.data.uid));
+      allow delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
+    
+    match /recoveryRecords/{document=**} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      allow write: if request.auth != null && 
+                   ((resource == null && request.auth.uid == request.resource.data.uid) || 
+                   (resource != null && request.auth.uid == resource.data.uid));
+      allow delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
   }
 }
 ```
