@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
+import { fetchUserProfile } from '../services/firestoreHelper';
+import { auth } from '../services/firebaseSetup';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../styles/styles';
 
@@ -23,7 +25,19 @@ const ProfileScreen = () => {
   });
 
   useEffect(() => {
-    
+    const loadUserProfile = async () => {
+      const userData = await fetchUserProfile();
+      if (userData) {
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          ...userData,
+          age: userData.age || '',
+        }));
+      } else {
+        setProfile((prevProfile) => ({ ...prevProfile, email: auth.currentUser?.email }));
+      }
+    };
+    loadUserProfile();
   }, []);
 
   const handleSaveProfile = async () => {
