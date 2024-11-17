@@ -6,6 +6,7 @@ import { auth } from '../services/firebaseSetup';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../styles/styles';
 import { signOut } from 'firebase/auth';
+import { launchCameraAsync, launchImageLibraryAsync, requestCameraPermissionsAsync, requestMediaLibraryPermissionsAsync } from 'expo-image-picker';
 
 const genderOptions = [
   { label: 'Male', value: 'Male' },
@@ -56,7 +57,51 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleChooseAvatar = () => {
-    
+    Alert.alert(
+      'Update Avatar',
+      'Choose an option',
+      [
+        {
+          text: 'Choose from Gallery',
+          onPress: handlePickImageFromGallery,
+        },
+        {
+          text: 'Take Photo',
+          onPress: handleTakePhoto,
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handlePickImageFromGallery = async () => {
+    const permissionResult = await requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      Alert.alert('Permission Denied', 'You need to grant camera roll permissions to select an image.');
+      return;
+    }
+    const pickerResult = await launchImageLibraryAsync({ base64: false });
+    if (!pickerResult.canceled && pickerResult.assets?.length > 0) {
+      const selectedImageUri = pickerResult.assets[0].uri;
+      setProfile({ ...profile, avatar: selectedImageUri });
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const permissionResult = await requestCameraPermissionsAsync();
+    if (permissionResult.granted === false) {
+      Alert.alert('Permission Denied', 'You need to grant camera permissions to take a photo.');
+      return;
+    }
+    const pickerResult = await launchCameraAsync({ base64: false });
+    if (!pickerResult.canceled && pickerResult.assets?.length > 0) {
+      const capturedImageUri = pickerResult.assets[0].uri;
+      setProfile({ ...profile, avatar: capturedImageUri });
+    }
   };
 
   return (
