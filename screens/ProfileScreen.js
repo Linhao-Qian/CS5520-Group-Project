@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
 import { fetchUserProfile } from '../services/firestoreHelper';
 import { auth } from '../services/firebaseSetup';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../styles/styles';
+import { signOut } from 'firebase/auth';
 
 const genderOptions = [
   { label: 'Male', value: 'Male' },
@@ -13,7 +14,7 @@ const genderOptions = [
   { label: 'Prefer Not to Say', value: 'Prefer Not to Say' },
 ];
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const [profile, setProfile] = useState({
     username: 'default_user',
     email: '',
@@ -45,7 +46,13 @@ const ProfileScreen = () => {
   };
 
   const handleLogOut = async () => {
-    
+    try {
+      await signOut(auth);
+      navigation.replace('Login');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to log out');
+      console.error(error);
+    }
   };
 
   const handleChooseAvatar = () => {
