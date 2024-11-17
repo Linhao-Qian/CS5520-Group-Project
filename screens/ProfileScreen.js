@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
-import { fetchUserProfile } from '../services/firestoreHelper';
+import { fetchUserProfile, updateUserProfile } from '../services/firestoreHelper';
 import { auth } from '../services/firebaseSetup';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../styles/styles';
@@ -43,7 +43,17 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
   const handleSaveProfile = async () => {
-    
+    try {
+      const profileToSave = { ...profile };
+      if (!profileToSave.avatar) {
+        delete profileToSave.avatar;
+      }
+      await updateUserProfile(profileToSave);
+      Alert.alert('Success', 'Profile updated successfully');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update profile');
+      console.error(error);
+    }
   };
 
   const handleLogOut = async () => {
