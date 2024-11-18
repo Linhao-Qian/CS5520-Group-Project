@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import { fetchNearbyPlaces } from "../services/locationService";
 
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadLocation = async () => {
+    const loadLocationAndPlaces = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -19,10 +21,13 @@ const MapScreen = () => {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation.coords);
+
+      const nearbyPlaces = await fetchNearbyPlaces(currentLocation.coords, "Pharmacy");
+      setPlaces(nearbyPlaces);
       setLoading(false);
     };
 
-    loadLocation();
+    loadLocationAndPlaces();
   }, []);
 
   if (loading) {
@@ -57,6 +62,18 @@ const MapScreen = () => {
           title="Your Location"
           pinColor="blue"
         />
+
+        {places.map((place, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: place.geometry.location.lat,
+              longitude: place.geometry.location.lng,
+            }}
+            title={place.name}
+            pinColor="red"
+          />
+        ))}
       </MapView>
     </View>
   );
