@@ -45,6 +45,14 @@ export const styles = StyleSheet.create({
     color: colors.primary,
     textAlign: 'left',
   },
+  input: {
+    backgroundColor: '#fff',
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
   button: {
     marginTop: 10,
     paddingVertical: 10,

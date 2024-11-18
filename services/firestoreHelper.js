@@ -1,5 +1,9 @@
 import { db, auth } from "./firebaseSetup";
 import { collection, doc, getDoc, setDoc, query, where, addDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import uuid from "react-native-uuid";
+
+const storage = getStorage();
 
 export const createUserProfile = async (profile) => {
   try {
@@ -7,6 +11,7 @@ export const createUserProfile = async (profile) => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     const userProfileRef = doc(db, "users", user.uid);
     await setDoc(userProfileRef, profile);
   } catch (error) {
@@ -21,6 +26,7 @@ export const fetchHealthRecords = async () => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     const recordsCollection = collection(db, "healthRecords");
     const userQuery = query(recordsCollection, where("uid", "==", user.uid));
     const recordsSnapshot = await getDocs(userQuery);
@@ -37,11 +43,11 @@ export const addOrUpdateHealthRecord = async (record) => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     if (record.id) {
       const recordRef = doc(db, "healthRecords", record.id);
       await updateDoc(recordRef, { ...record, uid: user.uid });
     } else {
-
       await addDoc(collection(db, "healthRecords"), { ...record, uid: user.uid });
     }
   } catch (error) {
@@ -66,6 +72,7 @@ export const fetchUserProfile = async () => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     const userProfileRef = doc(db, "users", user.uid);
     const userProfileSnapshot = await getDoc(userProfileRef);
     if (userProfileSnapshot.exists()) {
@@ -86,6 +93,7 @@ export const updateUserProfile = async (profile) => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     const userProfileRef = doc(db, "users", user.uid);
     await setDoc(userProfileRef, profile, { merge: true });
   } catch (error) {
@@ -100,6 +108,7 @@ export const fetchMedicineReminders = async () => {
     if (!user) {
       throw new Error("User not authenticated");
     }
+
     const remindersCollection = collection(db, "medicine");
     const userQuery = query(remindersCollection, where("uid", "==", user.uid));
     const remindersSnapshot = await getDocs(userQuery);
@@ -121,9 +130,8 @@ export const addOrUpdateMedicineReminder = async (reminder) => {
       const reminderRef = doc(db, "medicine", reminder.id);
       await updateDoc(reminderRef, { ...reminder, uid: user.uid });
     } else {
-
       const docRef = await addDoc(collection(db, "medicine"), { ...reminder, uid: user.uid });
-      reminder.id = docRef.id; 
+      reminder.id = docRef.id;
       await updateDoc(docRef, { id: docRef.id });
     }
   } catch (error) {
@@ -183,9 +191,23 @@ export const fetchRecoveryRecords = async () => {
 export const deleteRecoveryRecord = async (id) => {
   try {
     const recordRef = doc(db, "recoveryRecords", id);
-    await deleteDoc(recordRef);
+    const recordSnapshot = await getDoc(recordRef);
+    if (recordSnapshot.exists()) {
+      const recordData = recordSnapshot.data();
+      const photos = recordData.photos || [];
+
+      for (const photo of photos) {
+        if (photo.storagePath) {
+          await deleteImageFromStorage(photo.storagePath);
+        }
+      }
+
+      await deleteDoc(recordRef);
+    } else {
+      throw new Error("Record not found");
+    }
   } catch (error) {
-    console.error("Error deleting record:", error);
+    console.error("Error deleting recovery record:", error);
     throw error;
   }
 };

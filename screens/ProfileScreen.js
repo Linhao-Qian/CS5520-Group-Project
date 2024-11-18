@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, Text, Image, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
 import { fetchUserProfile, updateUserProfile } from '../services/firestoreHelper';
 import { auth } from '../services/firebaseSetup';
+import { signOut } from 'firebase/auth';
+import * as ImagePicker from 'expo-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../styles/styles';
-import { signOut } from 'firebase/auth';
-import { launchCameraAsync, launchImageLibraryAsync, requestCameraPermissionsAsync, requestMediaLibraryPermissionsAsync } from 'expo-image-picker';
 
 const genderOptions = [
   { label: 'Male', value: 'Male' },
@@ -89,12 +89,13 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handlePickImageFromGallery = async () => {
-    const permissionResult = await requestMediaLibraryPermissionsAsync();
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       Alert.alert('Permission Denied', 'You need to grant camera roll permissions to select an image.');
       return;
     }
-    const pickerResult = await launchImageLibraryAsync({ base64: false });
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({ base64: false });
     if (!pickerResult.canceled && pickerResult.assets?.length > 0) {
       const selectedImageUri = pickerResult.assets[0].uri;
       setProfile({ ...profile, avatar: selectedImageUri });
@@ -102,12 +103,13 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleTakePhoto = async () => {
-    const permissionResult = await requestCameraPermissionsAsync();
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
       Alert.alert('Permission Denied', 'You need to grant camera permissions to take a photo.');
       return;
     }
-    const pickerResult = await launchCameraAsync({ base64: false });
+
+    const pickerResult = await ImagePicker.launchCameraAsync({ base64: false });
     if (!pickerResult.canceled && pickerResult.assets?.length > 0) {
       const capturedImageUri = pickerResult.assets[0].uri;
       setProfile({ ...profile, avatar: capturedImageUri });
@@ -122,6 +124,7 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.avatar}
         />
       </TouchableOpacity>
+
       <Card style={styles.card}>
         <Card.Content>
           <TextInput
@@ -132,6 +135,7 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.input}
             theme={{ colors: { primary: colors.primary } }}
           />
+
           <TextInput
             label="Username"
             value={profile.username}
@@ -140,6 +144,7 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.input}
             theme={{ colors: { primary: colors.primary } }}
           />
+
           <TextInput
             label="Height (cm)"
             value={profile.height}
@@ -149,6 +154,7 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.input}
             theme={{ colors: { primary: colors.primary } }}
           />
+
           <Text style={styles.label}>Gender</Text>
           <Dropdown
             style={styles.dropdown}
@@ -158,6 +164,7 @@ const ProfileScreen = ({ navigation }) => {
             value={profile.gender}
             onChange={(item) => setProfile({ ...profile, gender: item.value })}
           />
+
           <TextInput
             label="Age"
             value={profile.age.toString()}
@@ -167,6 +174,7 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.input}
             theme={{ colors: { primary: colors.primary } }}
           />
+
           <TextInput
             label="Allergies"
             value={profile.allergies}
@@ -175,13 +183,21 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.input}
             theme={{ colors: { primary: colors.primary } }}
           />
+
+          {/* <TouchableOpacity onPress={() => navigation.navigate('ChangePassword')} style={styles.changePasswordContainer}>
+            <Text style={styles.changePasswordText}>Want to change password?</Text>
+          </TouchableOpacity> */}
+
           <Button mode="contained" onPress={handleSaveProfile} style={styles.saveButton}>
             Save Profile
           </Button>
+
+
           <Button
             mode="contained"
             onPress={handleLogOut}
             style={styles.logoutButton}
+            color="#f44336"
           >
             Log Out
           </Button>
@@ -227,6 +243,14 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: 10,
+  },
+  changePasswordContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  changePasswordText: {
+    color: colors.primary,
+    textDecorationLine: 'underline',
   },
 });
 

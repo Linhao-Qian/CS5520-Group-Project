@@ -25,6 +25,7 @@ const LoginScreen = ({ navigation }) => {
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Card style={styles.card}>
         <Text style={styles.title}>Login</Text>
+        
         <FormInput
           label="Email"
           value={email}
@@ -32,6 +33,7 @@ const LoginScreen = ({ navigation }) => {
           keyboardType="email-address"
           placeholder="Enter your email"
         />
+        
         <FormInput
           label="Password"
           value={password}
@@ -39,13 +41,17 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
           placeholder="Enter your password"
         />
+        
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.linkText}>Forgot Password?</Text>
         </TouchableOpacity>
