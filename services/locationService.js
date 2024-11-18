@@ -26,4 +26,23 @@ export const fetchNearbyPlaces = async (location, type) => {
       return [];
     }
   };
+
+  export const fetchPlaceDetails = async (placeId) => {
+    try {
+      const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.EXPO_PUBLIC_mapsApiKey}`;
+      const response = await fetch(url);
+      const result = await response.json();
+  
+      if (result.status !== "OK") {
+        console.error("Error fetching place details:", result.status);
+        return null;
+      }
+  
+      return result.result;
+    } catch (error) {
+      console.error("Error in fetchPlaceDetails:", error);
+      return null;
+    }
+  };
+  
   
