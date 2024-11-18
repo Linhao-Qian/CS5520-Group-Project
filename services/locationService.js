@@ -26,7 +26,7 @@ export const fetchNearbyPlaces = async (location, type) => {
       return [];
     }
   };
-
+  
   export const fetchPlaceDetails = async (placeId) => {
     try {
       const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.EXPO_PUBLIC_mapsApiKey}`;
@@ -44,5 +44,4 @@ export const fetchNearbyPlaces = async (location, type) => {
       return null;
     }
   };
-  
   
