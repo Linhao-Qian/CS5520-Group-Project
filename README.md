@@ -116,15 +116,21 @@ service cloud.firestore {
   }
 }
 ```
+## The 3rd party API keys
+```
+EXPO_PUBLIC_mapsApiKey=AIzaSyDBpCjhtC6Ne9GqU84l4qLcMs4O_gzDwyM
+```
 ## The current state of the application
 So far, we have implemented these following content:
 - overall structure
 - navigation
 - CRUD operations to Firestore
-- Login/Signup module
+- Login/Signup module (Authentication part 1)
 - Health Records module
+- Map module (Location functionality, using Google Places API)
+- Profile module (Authentication part 2, containing logout functionality)
 
-## What each member has contributed
+## What each member contributed in iteration 1
 Tao Wu:
 - overall structure
 - navigation
@@ -155,3 +161,14 @@ Linhao Qian:
 &ensp;&ensp;&ensp;&ensp;<img src="assets/forgot-password.png" width="300" />
 
 - README.md
+
+## What each member contributed in iteration 2
+Tao Wu:
+- Map module (Location functionality, using Google Places API)
+
+&ensp;&ensp;&ensp;&ensp;<img src="assets/map.png" width="300" />
+
+Linhao Qian:
+- Profile module (Authentication part 2, containing logout functionality)
+
+&ensp;&ensp;&ensp;&ensp;<img src="assets/profile.png" width="300" />
