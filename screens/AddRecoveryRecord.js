@@ -9,7 +9,6 @@ import { colors } from "../styles/styles";
 
 const AddRecoveryRecord = ({ navigation, route }) => {
   const recordToEdit = route.params?.record || null;
-
   const [diseaseName, setDiseaseName] = useState(recordToEdit?.diseaseName || "");
   const [symptoms, setSymptoms] = useState(recordToEdit?.symptoms || "");
   const [startDate, setStartDate] = useState(recordToEdit?.startDate ? new Date(recordToEdit.startDate) : new Date());
