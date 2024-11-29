@@ -4,6 +4,8 @@ import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import TabNavigator from "./TabNavigator";
+import AddRecoveryRecord from "../screens/AddRecoveryRecord";
+import RecordDetail from "../screens/RecordDetail";
 import AddHealthRecordScreen from "../screens/AddHealthRecordScreen";
 import EditHealthRecordScreen from "../screens/EditHealthRecordScreen";
 import { colors } from "../styles/styles";
@@ -32,6 +34,24 @@ const MainStackNavigator = () => {
         name="Home" 
         component={TabNavigator} 
         options={{ headerShown: false }} 
+      />
+      <Stack.Screen
+        name="AddRecoveryRecord"
+        component={AddRecoveryRecord}
+        options={{
+          title: "Add Recovery Record",
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: "#fff",
+        }}
+      />
+      <Stack.Screen
+        name="RecordDetail"
+        component={RecordDetail}
+        options={{
+          title: "Record Details",
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: "#fff",
+        }}
       />
       <Stack.Screen
         name="AddHealthRecord"

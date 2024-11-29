@@ -1,5 +1,9 @@
 import { db, auth } from "./firebaseSetup";
 import { collection, doc, getDoc, setDoc, query, where, addDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import uuid from "react-native-uuid";
+
+const storage = getStorage();
 
 export const createUserProfile = async (profile) => {
   try {
@@ -201,6 +205,39 @@ export const fetchRecoveryRecordById = async (id) => {
     }
   } catch (error) {
     console.error("Error fetching recovery record:", error);
+    throw error;
+  }
+};
+
+export const uploadImageToStorage = async (imageUri) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    const fileName = `images/${user.uid}/${uuid.v4()}`;
+    const storageRef = ref(storage, fileName);
+
+    await uploadBytes(storageRef, blob);
+
+    const downloadURL = await getDownloadURL(storageRef);
+
+    return { downloadURL, storagePath: fileName };
+  } catch (error) {
+    console.error("Error uploading image to storage:", error);
+    throw error;
+  }
+};
+
+export const deleteImageFromStorage = async (storagePath) => {
+  try {
+    const storageRef = ref(storage, storagePath);
+    await deleteObject(storageRef);
+  } catch (error) {
+    console.error("Error deleting image from storage:", error);
     throw error;
   }
 };
