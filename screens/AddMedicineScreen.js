@@ -1,33 +1,22 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
-import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { Button, Card } from 'react-native-paper';
-import { colors } from '../styles/styles';
-import FormInput from '../components/FormInput';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const AddMedicineScreen = ({ navigation }) => {
-  const [medicineName, setMedicineName] = useState('');
-  const [dosage, setDosage] = useState('');
-  const [condition, setCondition] = useState('');
-  const [notes, setNotes] = useState('');
+  const [time, setTime] = useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerBackTitle: 'Back',
-      headerTintColor: '#fff',
-      headerStyle: {
-        backgroundColor: colors.primary,
-      },
-    });
-  }, [navigation]);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
 
-  const handleSaveReminder = () => {
-    if (!medicineName.trim() || !dosage.trim() || !condition.trim()) {
-      Alert.alert('Invalid Input', 'Please fill in all required fields');
-      return;
-    }
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
-    Alert.alert('Success', 'Medicine reminder saved.');
-    navigation.goBack();
+  const handleConfirm = (selectedDate) => {
+    const roundedTime = new Date(selectedDate);
+    roundedTime.setSeconds(0);
+    setTime(roundedTime);
+    hideDatePicker();
   };
 
   return (
@@ -44,6 +33,14 @@ const AddMedicineScreen = ({ navigation }) => {
             value={dosage}
             onChangeText={setDosage}
           />
+          <TouchableOpacity onPress={showDatePicker}>
+            <FormInput
+              label="Time"
+              value={time ? time.toLocaleString() : ''}
+              editable={false}
+              pointerEvents="none"
+            />
+          </TouchableOpacity>
           <FormInput
             label="Condition *"
             value={condition}
@@ -54,7 +51,6 @@ const AddMedicineScreen = ({ navigation }) => {
             value={notes}
             onChangeText={setNotes}
           />
-
           <Button mode="contained" onPress={handleSaveReminder} style={styles.saveButton}>
             Save
           </Button>
@@ -63,30 +59,14 @@ const AddMedicineScreen = ({ navigation }) => {
           </Button>
         </Card.Content>
       </Card>
+
+      {/* 日期选择器 */}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="datetime"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  card: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    elevation: 3,
-    paddingVertical: 20,
-  },
-  saveButton: {
-    marginTop: 20,
-    backgroundColor: colors.primary,
-  },
-  cancelButton: {
-    marginTop: 10,
-    borderColor: colors.primary,
-  },
-});
-
-export default AddMedicineScreen;
