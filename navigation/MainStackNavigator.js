@@ -4,7 +4,10 @@ import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import TabNavigator from "./TabNavigator";
+import AddMedicineScreen from "../screens/AddMedicineScreen";
+import EditMedicineScreen from "../screens/EditMedicineScreen";
 import AddRecoveryRecord from "../screens/AddRecoveryRecord";
+import RecoveryScreen from "../screens/RecoveryScreen";
 import RecordDetail from "../screens/RecordDetail";
 import AddHealthRecordScreen from "../screens/AddHealthRecordScreen";
 import EditHealthRecordScreen from "../screens/EditHealthRecordScreen";
@@ -34,6 +37,33 @@ const MainStackNavigator = () => {
         name="Home" 
         component={TabNavigator} 
         options={{ headerShown: false }} 
+      />
+      <Stack.Screen
+        name="AddMedicine"
+        component={AddMedicineScreen}
+        options={{
+          title: "Add Medicine",
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: "#fff",
+        }}
+      />
+      <Stack.Screen
+        name="EditMedicine"
+        component={EditMedicineScreen}
+        options={{
+          title: "Edit Medicine",
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: "#fff",
+        }}
+      />
+      <Stack.Screen
+        name="Recovery"
+        component={RecoveryScreen}
+        options={{
+          title: "Recovery",
+          headerStyle: { backgroundColor: colors.primary },
+          headerTintColor: "#fff",
+        }}
       />
       <Stack.Screen
         name="AddRecoveryRecord"
