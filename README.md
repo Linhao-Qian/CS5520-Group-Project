@@ -185,3 +185,6 @@ Linhao Qian:
 - Recovery module (Camera functionality)
 
 &ensp;&ensp;&ensp;&ensp;<img src="assets/recovery.png" width="300" />
+
+## Demo Link
+You can find our demo video in https://youtu.be/rFgqWJJe220
