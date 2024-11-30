@@ -121,14 +121,16 @@ service cloud.firestore {
 EXPO_PUBLIC_mapsApiKey=AIzaSyDBpCjhtC6Ne9GqU84l4qLcMs4O_gzDwyM
 ```
 ## The current state of the application
-So far, we have implemented these following content:
+So far, we have implemented all the tasks, including these following content:
 - overall structure
 - navigation
 - CRUD operations to Firestore
 - Login/Signup module (Authentication part 1)
-- Health Records module
+- Health Records module (Sort functionality)
 - Map module (Location functionality, using Google Places API)
 - Profile module (Authentication part 2, containing logout functionality)
+- Medicine module (Notification and search functionality)
+- Recovery module (Camera functionality)
 
 ## What each member contributed in iteration 1
 Tao Wu:
@@ -172,3 +174,14 @@ Linhao Qian:
 - Profile module (Authentication part 2, containing logout functionality)
 
 &ensp;&ensp;&ensp;&ensp;<img src="assets/profile.png" width="300" />
+
+## What each member contributed in iteration 3
+Tao Wu:
+- Medicine module (Notification and search functionality)
+
+&ensp;&ensp;&ensp;&ensp;<img src="assets/medicine.png" width="300" />
+
+Linhao Qian:
+- Recovery module (Camera functionality)
+
+&ensp;&ensp;&ensp;&ensp;<img src="assets/recovery.png" width="300" />
