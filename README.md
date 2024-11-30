@@ -116,6 +116,18 @@ service cloud.firestore {
   }
 }
 ```
+## The firebase storage rules
+```
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /images/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
 ## The 3rd party API keys
 ```
 EXPO_PUBLIC_mapsApiKey=AIzaSyDBpCjhtC6Ne9GqU84l4qLcMs4O_gzDwyM
@@ -185,3 +197,6 @@ Linhao Qian:
 - Recovery module (Camera functionality)
 
 &ensp;&ensp;&ensp;&ensp;<img src="assets/recovery.png" width="300" />
+
+## Demo Link
+You can find our demo video in https://youtu.be/rFgqWJJe220
